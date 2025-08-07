@@ -18,7 +18,7 @@ export function Compass({ heading }: CompassProps) {
     <div className="relative w-80 h-80 sm:w-96 sm:h-96">
       <div style={rotationStyle}>
         <Image
-          src="https://placehold.co/400x400.png"
+          src="/images/1.PNG"
           alt="Compass"
           width={400}
           height={400}

@@ -80,7 +80,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-background text-foreground dark">
+    <div className="bg-background text-foreground">
       <ScrollArea className="h-screen w-full">
         <div className="flex flex-col items-center justify-between min-h-[100dvh] p-4 sm:p-6">
           <header className="w-full max-w-md flex items-center justify-between z-10">
