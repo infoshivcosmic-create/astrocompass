@@ -84,7 +84,7 @@ export default function Home() {
       <ScrollArea className="h-screen w-full">
         <div className="flex flex-col items-center justify-between min-h-[100dvh] p-4 sm:p-6">
           <header className="w-full max-w-md flex items-center justify-between z-10">
-            <Logo className="h-10 w-auto" />
+            <Logo />
             <Button variant="ghost" size="icon">
               <MoreVertical />
             </Button>
