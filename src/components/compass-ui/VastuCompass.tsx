@@ -11,7 +11,7 @@ interface VastuCompassProps {
 const VastuCompass: React.FC<VastuCompassProps> = ({ rotation }) => {
   return (
     <div className="relative w-80 h-80 sm:w-96 sm:h-96 mx-auto mt-24 mb-8">
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 z-10">
+      <div className="absolute left-1/2 -translate-x-1/2 z-10" style={{ top: '-3px' }}>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 0L24 21H0L12 0Z" fill="#FF0000"/>
         </svg>
