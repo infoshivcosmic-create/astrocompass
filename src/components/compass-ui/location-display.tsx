@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin, AlertCircle } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Compass, AlertCircle } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 export function LocationDisplay() {
   const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
@@ -15,7 +15,6 @@ export function LocationDisplay() {
     }
 
     let isMounted = true;
-
     const success = (position: GeolocationPosition) => {
       if (isMounted) {
         setLocation({
@@ -25,57 +24,52 @@ export function LocationDisplay() {
         setError(null);
       }
     };
-
     const errorCallback = (err: GeolocationPositionError) => {
       if (isMounted) {
-        setError(`Unable to retrieve location: ${err.message}`);
+        setError(`Location Error`);
       }
     };
-
-    const watchId = navigator.geolocation.watchPosition(success, errorCallback, {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 60000,
-    });
-
+    const watchId = navigator.geolocation.watchPosition(success, errorCallback, { enableHighAccuracy: true });
     return () => {
       isMounted = false;
       navigator.geolocation.clearWatch(watchId);
     };
   }, []);
 
-  const content = () => {
-    if (location) {
-      return (
-        <span>
-          {location.lat.toFixed(4)}°, {location.lon.toFixed(4)}°
-        </span>
-      );
-    }
-    if (error) {
-      return (
-        <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger>
-                    <div className="flex items-center gap-1 text-destructive/80">
-                        <AlertCircle className="w-4 h-4" />
-                        <span>Location Error</span>
-                    </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>{error}</p>
-                </TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
-      );
-    }
-    return <span>Fetching...</span>;
+  const formatCoordinate = (coord: number, type: 'lat' | 'lon') => {
+    const absolute = Math.abs(coord);
+    const degrees = Math.floor(absolute);
+    const minutesNotTruncated = (absolute - degrees) * 60;
+    const minutes = Math.floor(minutesNotTruncated);
+    const seconds = ((minutesNotTruncated - minutes) * 60).toFixed(2);
+    const direction = coord >= 0 ? (type === 'lat' ? 'N' : 'E') : (type === 'lat' ? 'S' : 'W');
+    return `${degrees}°${minutes}'${seconds}"${direction}`;
   };
 
   return (
-    <div className="flex items-center gap-2 text-sm text-foreground/80 bg-background/50 px-3 py-1.5 rounded-full border border-border/50 backdrop-blur-sm">
-      <MapPin className="w-4 h-4 text-primary" />
-      {content()}
+    <div className="grid grid-cols-2 gap-4 w-full">
+      <Card className="bg-primary/10 border-primary/30 rounded-xl">
+        <CardContent className="p-4 flex flex-col items-center justify-center text-center space-y-2">
+          <p className="text-lg font-semibold text-foreground">
+            {location ? formatCoordinate(location.lat, 'lat') : error || '...'}
+          </p>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Compass className="w-4 h-4 text-primary" />
+            <span>Latitude</span>
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="bg-primary/10 border-primary/30 rounded-xl">
+        <CardContent className="p-4 flex flex-col items-center justify-center text-center space-y-2">
+           <p className="text-lg font-semibold text-foreground">
+            {location ? formatCoordinate(location.lon, 'lon') : error || '...'}
+          </p>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Compass className="w-4 h-4 text-primary" />
+            <span>Longitude</span>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { RotateCw, AlertTriangle } from 'lucide-react';
+import { RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -12,7 +12,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface CalibrationToolProps {
   isCalibrated: boolean;
@@ -20,20 +19,11 @@ interface CalibrationToolProps {
 
 export function CalibrationTool({ isCalibrated }: CalibrationToolProps) {
   return (
-    <div className="w-full max-w-md flex flex-col items-center gap-4">
-      {!isCalibrated && (
-        <Alert>
-            <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Calibration Recommended</AlertTitle>
-            <AlertDescription>
-            Compass accuracy is low. Please move your device in a figure-eight motion.
-            </AlertDescription>
-        </Alert>
-      )}
+    <div className="w-full flex flex-col items-center gap-4">
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="outline" className="w-full sm:w-auto">
-            <RotateCw /> Recalibrate Instructions
+          <Button variant="default" className="w-full rounded-full bg-primary/90 hover:bg-primary text-primary-foreground text-lg py-6">
+            <RotateCw className="mr-2" /> Calibrate compass
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
@@ -64,6 +54,9 @@ export function CalibrationTool({ isCalibrated }: CalibrationToolProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      {!isCalibrated && (
+         <p className="text-xs text-muted-foreground">Calibration Recommended</p>
+      )}
     </div>
   );
 }

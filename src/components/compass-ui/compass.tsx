@@ -2,56 +2,85 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { directions } from '@/lib/vastu';
 
 interface CompassProps {
   heading: number | null;
 }
 
 export function Compass({ heading }: CompassProps) {
+  const safeHeading = heading || 0;
   const rotationStyle = {
-    transform: `rotate(${-(heading || 0)}deg)`,
+    transform: `rotate(${-safeHeading}deg)`,
     transition: 'transform 0.5s ease-out',
   };
 
+  const dialPoints = Array.from({ length: 12 }, (_, i) => i * 30);
+  const subDialPoints = Array.from({ length: 72 }, (_, i) => i * 5);
+
   return (
-    <div className="relative w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-card shadow-xl border-4 border-primary/20 flex items-center justify-center">
-      <div className="absolute w-full h-full rounded-full" style={rotationStyle}>
-        {/* Compass Rose with 16 directions */}
-        {directions.map(({ label, angle }) => (
-          <div
-            key={label}
-            className="absolute w-full h-full"
-            style={{ transform: `rotate(${angle}deg)` }}
-          >
-            <div
-              className={cn(
-                'absolute top-2 left-1/2 -ml-4 w-8 text-center text-xs sm:text-sm font-semibold',
-                ['N', 'E', 'S', 'W'].includes(label) ? 'text-destructive font-bold text-base' : 'text-foreground/80'
-              )}
+    <div className="relative w-80 h-80 sm:w-96 sm:h-96">
+      {/* Outer static ring with numbers and cardinal points */}
+      <div className="absolute w-full h-full" style={rotationStyle}>
+        {dialPoints.map((angle) => (
+          <div key={`dial-${angle}`} className="absolute w-full h-full" style={{ transform: `rotate(${angle}deg)` }}>
+            <span
+              className="absolute top-4 left-1/2 -translate-x-1/2 text-lg text-foreground/80"
               style={{ transform: `rotate(${-angle}deg)` }}
             >
-              {label}
-            </div>
+              {[0, 90, 180, 270].includes(angle) ? '' : angle}
+            </span>
           </div>
         ))}
-        {/* Cardinal direction lines */}
-        <div className="absolute top-1/2 left-1/2 w-px h-[calc(100%-2rem)] -translate-y-1/2 bg-border/50"></div>
-        <div className="absolute top-1/2 left-1/2 h-px w-[calc(100%-2rem)] -translate-x-1/2 bg-border/50"></div>
-        <div className="absolute top-1/2 left-1/2 w-px h-[calc(100%-4rem)] -translate-y-1/2 rotate-45 bg-border/20"></div>
-        <div className="absolute top-1/2 left-1/2 h-px w-[calc(100%-4rem)] -translate-x-1/2 rotate-45 bg-border/20"></div>
-      </div>
-      
-      {/* Needle */}
-      <div className="absolute top-0 left-1/2 h-1/2 w-full flex justify-center origin-bottom">
-        <svg viewBox="0 0 20 80" className="h-full w-auto" style={{filter: 'drop-shadow(0 2px 2px rgba(0,0,0,0.3))'}}>
-           <polygon points="10,0 20,20 10,80 0,20" fill="hsl(var(--destructive))" />
-        </svg>
+         <span className="absolute top-4 left-1/2 -translate-x-1/2 text-xl font-bold text-foreground" style={{ transform: `rotate(0deg)` }}>N</span>
+         <span className="absolute top-1/2 right-4 -translate-y-1/2 text-xl font-bold text-foreground" style={{ transform: `rotate(-90deg)` }}>E</span>
+         <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xl font-bold text-foreground" style={{ transform: `rotate(-180deg)` }}>S</span>
+         <span className="absolute top-1/2 left-4 -translate-y-1/2 text-xl font-bold text-foreground" style={{ transform: `rotate(-270deg)` }}>W</span>
       </div>
 
-       {/* Center pin */}
-       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-primary z-10 border-2 border-background"></div>
+       {/* Inner rotating part */}
+      <div className="absolute inset-[28%] rounded-full bg-primary/20 border-4 border-primary/50 shadow-inner">
+        <div className="relative w-full h-full rounded-full">
+           {/* Ring with ticks */}
+          <div className="absolute inset-0 rounded-full" style={rotationStyle}>
+            {subDialPoints.map((angle) => (
+              <div
+                key={`sub-dial-${angle}`}
+                className="absolute w-full h-full"
+                style={{ transform: `rotate(${angle}deg)` }}
+              >
+                <div
+                  className={cn(
+                    "absolute top-0 left-1/2 -ml-px h-2 w-px bg-primary/50",
+                    angle % 15 === 0 && "h-3 w-0.5 bg-primary/80"
+                  )}
+                />
+              </div>
+            ))}
+          </div>
 
+          {/* Center Text */}
+          <div className="absolute inset-0 flex items-center justify-center">
+             <div 
+              className="text-4xl font-mono text-foreground"
+              style={{ transform: `rotate(${-safeHeading}deg)` }}
+            >
+              <span style={{ transform: `rotate(${safeHeading}deg)`, display: 'inline-block' }}>
+                {Math.round(safeHeading)}°
+              </span>
+            </div>
+          </div>
+           {/* Needle */}
+            <div className="absolute top-1/2 left-1/2 -mt-[50%] h-1/2 w-4 -translate-x-1/2 origin-bottom" style={{ transform: `rotate(${safeHeading}deg)` }}>
+              <div className="w-full h-full" style={{
+                clipPath: 'polygon(50% 0, 100% 20%, 50% 100%, 0 20%)',
+              }}>
+                <div className="w-full h-full bg-destructive/80"></div>
+              </div>
+            </div>
+        </div>
+      </div>
+       {/* Background gradient */}
+      <div className="absolute inset-[25%] rounded-full bg-gradient-to-br from-primary/30 to-primary/10 opacity-50"></div>
     </div>
   );
 }
