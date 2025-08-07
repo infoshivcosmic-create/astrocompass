@@ -10,10 +10,11 @@ interface VastuCompassProps {
 }
 
 const compassThemes = [
-  '/images/1.PNG',
-  '/images/2.PNG',
-  '/images/3.PNG',
-  '/images/4.PNG',
+  '/images/1.png',
+  '/images/2.png',
+  '/images/3.png',
+  '/images/4.png',
+  '/images/5.png',
 ];
 
 const VastuCompass: React.FC<VastuCompassProps> = ({ rotation }) => {
@@ -43,7 +44,7 @@ const VastuCompass: React.FC<VastuCompassProps> = ({ rotation }) => {
         </div>
         <div
           className="w-full h-full transition-transform duration-500 ease-in-out"
-          style={{ transform: `rotate(${rotation}deg)` }}
+          style={{ transform: `rotate(${Math.round(rotation)}deg)` }}
         >
           <Image
             src={compassThemes[currentThemeIndex]}
