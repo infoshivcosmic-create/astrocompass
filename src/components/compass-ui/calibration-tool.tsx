@@ -29,7 +29,8 @@ export function CalibrationTool({ isCalibrated }: CalibrationToolProps) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Compass Calibration</AlertDialogTitle>
-            <AlertDialogDescription className="text-center space-y-4 pt-4">
+            <AlertDialogDescription asChild>
+              <div className="text-center space-y-4 pt-4">
               <p>
                 To improve compass accuracy, please move your phone in a figure-eight pattern a few times.
               </p>
@@ -46,6 +47,7 @@ export function CalibrationTool({ isCalibrated }: CalibrationToolProps) {
                         <animate attributeName="stroke-dashoffset" from="377" to="0" dur="4s" repeatCount="indefinite" />
                     </path>
                 </svg>
+              </div>
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
