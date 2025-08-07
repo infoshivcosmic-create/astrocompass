@@ -83,12 +83,12 @@ export default function Home() {
       <main className="pt-20 pb-6 px-4">
         {permissionState === 'granted' ? (
           <>
-            <div className="text-center mb-6">
+            <VastuCompass rotation={-heading} />
+            
+            <div className="text-center mt-6">
               <h1 className="text-lg font-semibold text-gray-800 mb-2">दिशा शक्ति चक्र</h1>
               <div className="text-2xl font-bold text-gray-900">{Math.round(heading)}° {currentDirection?.name}</div>
             </div>
-            
-            <VastuCompass rotation={-heading} />
             
             {currentDirection && <VastuDetails direction={currentDirection} />}
           </>
