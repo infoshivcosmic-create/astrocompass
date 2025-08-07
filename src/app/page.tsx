@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Compass as CompassIcon, AlertTriangle, MoreVertical } from 'lucide-react';
 import { Logo } from '@/components/compass-ui/logo';
-import { Compass as CompassComponent } from '@/components/compass-ui/compass';
+import { Compass } from '@/components/compass-ui/compass';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -130,7 +130,7 @@ export default function Home() {
                   </Alert>
                 )}
                 
-                <CompassComponent heading={heading} />
+                <Compass heading={heading} />
 
                 {heading !== null ? (
                   <div className="text-6xl font-bold tracking-tighter text-foreground">
