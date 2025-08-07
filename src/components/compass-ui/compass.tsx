@@ -26,9 +26,6 @@ export function Compass({ heading }: CompassProps) {
           data-ai-hint="compass abstract"
         />
       </div>
-      <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
-        <div className="w-2 h-20 bg-red-500 rounded-full" style={{ transform: 'translateY(-40px)' }}></div>
-      </div>
     </div>
   );
 }
