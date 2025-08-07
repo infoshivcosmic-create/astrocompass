@@ -13,6 +13,7 @@ const compassThemes = [
   '/images/1.PNG',
   '/images/2.PNG',
   '/images/3.PNG',
+  '/images/4.PNG',
 ];
 
 const VastuCompass: React.FC<VastuCompassProps> = ({ rotation }) => {
@@ -52,6 +53,7 @@ const VastuCompass: React.FC<VastuCompassProps> = ({ rotation }) => {
             className="rounded-full"
             data-ai-hint="compass abstract"
             key={currentThemeIndex}
+            unoptimized
           />
         </div>
       </div>
