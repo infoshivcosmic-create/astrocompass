@@ -1,26 +1,23 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Compass as CompassIcon, AlertTriangle, MoreVertical } from 'lucide-react';
-import { Logo } from '@/components/compass-ui/logo';
-import { Compass } from '@/components/compass-ui/compass';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { LocationDisplay } from '@/components/compass-ui/location-display';
-import { CalibrationTool } from '@/components/compass-ui/calibration-tool';
+import Header from '@/components/compass-ui/Header';
+import VastuCompass from '@/components/compass-ui/VastuCompass';
+import VastuDetails from '@/components/compass-ui/VastuDetails';
+import { getVastuDirection } from '@/lib/vastu';
+import type { VastuDirection } from '@/lib/vastu';
 
 export default function Home() {
-  const [heading, setHeading] = useState<number | null>(0);
+  const [heading, setHeading] = useState<number>(0);
   const [permissionState, setPermissionState] = useState<'denied' | 'granted' | 'prompt' | 'unsupported'>('granted');
   const [isIOS, setIsIOS] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isCalibrated, setIsCalibrated] = useState(true); // Assume calibrated until told otherwise
+  const [currentDirection, setCurrentDirection] = useState<VastuDirection | null>(null);
 
   const startCompass = useCallback(() => {
     const handleOrientation = (event: DeviceOrientationEvent) => {
       let alpha: number | null = null;
-      if ((event as any).webkitCompassHeading) {
+      if ((event as any).webkitCompassHeading) { // For iOS
         alpha = (event as any).webkitCompassHeading;
       } else {
         alpha = event.alpha;
@@ -28,7 +25,8 @@ export default function Home() {
 
       if (alpha !== null) {
         setHeading(alpha);
-        setIsCalibrated(event.absolute);
+        const direction = getVastuDirection(alpha);
+        setCurrentDirection(direction);
         if (permissionState !== 'granted') setPermissionState('granted');
         if (error) setError(null);
       } else if (!error) {
@@ -36,10 +34,10 @@ export default function Home() {
       }
     };
 
-    window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+    window.addEventListener('deviceorientation', handleOrientation, true);
     
     return () => {
-      window.removeEventListener('deviceorientationabsolute', handleOrientation, true);
+      window.removeEventListener('deviceorientation', handleOrientation, true);
     };
   }, [error, permissionState]);
 
@@ -80,83 +78,46 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-background text-foreground">
-      <ScrollArea className="h-screen w-full">
-        <div className="flex flex-col items-center justify-between min-h-[100dvh] p-4 sm:p-6">
-          <header className="w-full max-w-md flex items-center justify-between z-10">
-            <Logo />
-            <Button variant="ghost" size="icon">
-              <MoreVertical />
-            </Button>
-          </header>
-
-          <main className="flex-grow flex flex-col items-center justify-center space-y-8 text-center w-full py-8">
-            {permissionState !== 'granted' ? (
-              <div className="flex flex-col items-center justify-center text-center p-8 space-y-4 rounded-lg bg-card border max-w-sm">
-                <CompassIcon size={64} className="text-primary" />
-                <h2 className="text-2xl font-bold">Enable Vastu Compass</h2>
-                <p className="text-muted-foreground">
-                  To provide you with accurate Vastu directions, this app needs access to your device's motion and orientation sensors.
-                </p>
-                {permissionState === 'prompt' && isIOS && (
-                  <Button onClick={handlePermission} size="lg">
-                    <CompassIcon /> Enable Compass
-                  </Button>
-                )}
-                {permissionState === 'denied' && (
-                  <Alert variant="destructive">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertTitle>Permission Denied</AlertTitle>
-                    <AlertDescription>
-                      Please enable Motion & Orientation Access in your device's settings for this browser.
-                    </AlertDescription>
-                  </Alert>
-                )}
-                {permissionState === 'unsupported' && (
-                  <Alert variant="destructive">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertTitle>Not Supported</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
+    <div className="min-h-screen bg-white">
+      <Header />
+      <main className="pt-20 pb-6 px-4">
+        {permissionState === 'granted' ? (
+          <>
+            <div className="text-center mb-6">
+              <h1 className="text-lg font-semibold text-gray-800 mb-2">दिशा शक्ति चक्र</h1>
+              <div className="text-2xl font-bold text-gray-900">{Math.round(heading)}° {currentDirection?.name}</div>
+            </div>
+            
+            <VastuCompass rotation={-heading} />
+            
+            {currentDirection && <VastuDetails direction={currentDirection} />}
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center text-center p-8 space-y-4 rounded-lg bg-gray-50 border max-w-sm mx-auto mt-20">
+            <h2 className="text-2xl font-bold">Enable Vastu Compass</h2>
+            <p className="text-gray-500">
+              To provide you with accurate Vastu directions, this app needs access to your device's motion and orientation sensors.
+            </p>
+            {permissionState === 'prompt' && isIOS && (
+              <button onClick={handlePermission} className="px-4 py-2 bg-orange-500 text-white rounded-lg">
+                Enable Compass
+              </button>
+            )}
+            {permissionState === 'denied' && (
+              <div className="text-red-500">
+                <p>Permission Denied</p>
+                <p className="text-sm">Please enable Motion & Orientation Access in your device's settings for this browser.</p>
               </div>
-            ) : (
-              <>
-                {error && (
-                  <Alert variant="destructive" className="max-w-md">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertTitle>Compass Error</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
-                
-                <Compass heading={heading} />
-
-                {heading !== null ? (
-                  <div className="text-6xl font-bold tracking-tighter text-foreground">
-                    {Math.round(heading)}°
-                  </div>
-                ) : (
-                   <Alert className="max-w-md">
-                      <CompassIcon className="h-4 w-4 animate-spin"/>
-                      <AlertTitle>Calibrating...</AlertTitle>
-                      <AlertDescription>Please wait while we get a lock on the compass.</AlertDescription>
-                  </Alert>
-                )}
-              </>
             )}
-          </main>
-
-          <footer className="w-full z-10 flex flex-col items-center gap-6 max-w-md">
-            {permissionState === 'granted' && (
-              <>
-                <LocationDisplay />
-                <CalibrationTool isCalibrated={isCalibrated} />
-              </>
+             {permissionState === 'unsupported' && (
+              <div className="text-red-500">
+                <p>Not Supported</p>
+                <p className="text-sm">{error}</p>
+              </div>
             )}
-          </footer>
-        </div>
-      </ScrollArea>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
