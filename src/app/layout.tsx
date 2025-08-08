@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'Vastu Compass Pro',
+  title: 'Shiv Cosmic Energy Solutions',
   description: 'An interactive Vastu compass with AI-powered guidance.',
 };
 

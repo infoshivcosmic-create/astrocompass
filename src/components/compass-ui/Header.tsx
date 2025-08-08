@@ -10,7 +10,7 @@ const Header = () => {
           <div className="flex-shrink-0">
              <Logo />
           </div>
-          <h1 className="text-xl font-bold text-gray-800">Vastu Compass Pro</h1>
+          <h1 className="text-xl font-bold text-gray-800">Shiv Cosmic Energy Solutions</h1>
         </div>
       </div>
     </header>
