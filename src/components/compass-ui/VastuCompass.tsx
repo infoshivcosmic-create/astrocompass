@@ -30,13 +30,14 @@ const CompassThemeSwitcher: React.FC<{ onNext: () => void; onPrev: () => void }>
       <button
         onClick={onPrev}
         className="bg-white/50 rounded-full p-2"
-        style={{ marginLeft: '-34.5px' }}
+        style={{ marginLeft: '-35px' }}
       >
         <ChevronLeft className="w-8 h-8 text-gray-700" />
       </button>
       <button
         onClick={onNext}
-        className="bg-white/50 rounded-full p-2 mr-[-35px]"
+        className="bg-white/50 rounded-full p-2"
+        style={{ marginRight: '-35px' }}
       >
         <ChevronRight className="w-8 h-8 text-gray-700" />
       </button>
@@ -69,7 +70,7 @@ const CompassDetails: React.FC<{ heading: number | null; direction: string | und
     <div className="text-center mt-6">
         <h1 className="text-lg font-semibold text-gray-800 mb-2">Destiny Compass</h1>
         <div className="text-2xl font-bold text-gray-900">{heading !== null ? `${Math.round(heading)}° ${direction}`: '--°'}</div>
-        <Button onClick={onRecalibrate} variant="outline" className="mt-4">
+        <Button onClick={onRecalibrate} variant="outline" className="mt-4 transition-transform transform hover:scale-105 active:scale-95 hover:shadow-lg">
           <RefreshCw className="mr-2 h-4 w-4" />
           Recalibrate
         </Button>
