@@ -36,8 +36,9 @@ export const useVastu = () => {
       }
 
       if (alpha !== null) {
-        setHeading(alpha);
-        const direction = getVastuDirection(alpha);
+        const newHeading = Math.round(alpha);
+        setHeading(newHeading);
+        const direction = getVastuDirection(newHeading);
         setCurrentDirection(direction);
         if (permissionState !== 'granted') setPermissionState('granted');
         if (error) setError(null);
