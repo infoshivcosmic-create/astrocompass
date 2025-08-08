@@ -60,7 +60,7 @@ const Compass: React.FC<{ rotation: number; theme: string }> = ({ rotation, them
 
 const CompassDetails: React.FC<{ heading: number; direction: string | undefined }> = ({ heading, direction }) => (
     <div className="text-center mt-6">
-        <h1 className="text-lg font-semibold text-gray-800 mb-2">दिशा शक्ति चक्र</h1>
+        <h1 className="text-lg font-semibold text-gray-800 mb-2">Destiny Compass</h1>
         <div className="text-2xl font-bold text-gray-900">{Math.round(heading)}° {direction}</div>
     </div>
     );
