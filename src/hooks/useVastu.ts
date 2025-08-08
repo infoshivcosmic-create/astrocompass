@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { getVastuDirection } from '@/lib/vastu';
 import type { VastuDirection } from '@/lib/vastu';
 
@@ -10,14 +10,15 @@ export const useVastu = () => {
   const [isIOS, setIsIOS] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentDirection, setCurrentDirection] = useState<VastuDirection | null>(null);
-  const [orientationListener, setOrientationListener] = useState<((event: DeviceOrientationEvent) => void) | null>(null);
+  
+  const orientationListenerRef = useRef<((event: DeviceOrientationEvent) => void) | null>(null);
 
   const stopCompass = useCallback(() => {
-    if (orientationListener) {
-      window.removeEventListener('deviceorientation', orientationListener, true);
-      setOrientationListener(null);
+    if (orientationListenerRef.current) {
+      window.removeEventListener('deviceorientation', orientationListenerRef.current, true);
+      orientationListenerRef.current = null;
     }
-  }, [orientationListener]);
+  }, []);
 
   const startCompass = useCallback(() => {
     stopCompass(); // Ensure no multiple listeners are attached
@@ -42,7 +43,7 @@ export const useVastu = () => {
     };
     
     window.addEventListener('deviceorientation', handleOrientation, true);
-    setOrientationListener(() => handleOrientation);
+    orientationListenerRef.current = handleOrientation;
   }, [error, permissionState, stopCompass]);
 
   const recalibrate = () => {
