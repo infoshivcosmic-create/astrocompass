@@ -42,7 +42,7 @@ const CompassThemeSwitcher: React.FC<{ onNext: () => void; onPrev: () => void }>
 
 const Compass: React.FC<{ rotation: number; theme: string }> = ({ rotation, theme }) => (
     <div
-      className="w-full h-full transition-transform duration-500 ease-in-out"
+      className="w-full h-full transition-transform duration-500 ease-in-out flex items-center justify-center"
       style={{ transform: `rotate(${-rotation}deg)` }}
     >
       <Image
