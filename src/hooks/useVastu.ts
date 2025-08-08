@@ -25,9 +25,12 @@ export const useVastu = () => {
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
       let alpha: number | null = null;
-      if ((event as any).webkitCompassHeading) { // For iOS
+      // For iOS devices
+      if ((event as any).webkitCompassHeading) {
         alpha = (event as any).webkitCompassHeading;
-      } else {
+      } 
+      // For other devices
+      else {
         alpha = event.alpha;
       }
 
