@@ -10,8 +10,18 @@ export const useVastu = () => {
   const [isIOS, setIsIOS] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentDirection, setCurrentDirection] = useState<VastuDirection | null>(null);
+  const [orientationListener, setOrientationListener] = useState<((event: DeviceOrientationEvent) => void) | null>(null);
+
+  const stopCompass = useCallback(() => {
+    if (orientationListener) {
+      window.removeEventListener('deviceorientation', orientationListener, true);
+      setOrientationListener(null);
+    }
+  }, [orientationListener]);
 
   const startCompass = useCallback(() => {
+    stopCompass(); // Ensure no multiple listeners are attached
+
     const handleOrientation = (event: DeviceOrientationEvent) => {
       let alpha: number | null = null;
       if ((event as any).webkitCompassHeading) { // For iOS
@@ -30,13 +40,19 @@ export const useVastu = () => {
         setError("Could not read compass data. Your device might not have a magnetometer.");
       }
     };
-
-    window.addEventListener('deviceorientation', handleOrientation, true);
     
-    return () => {
-      window.removeEventListener('deviceorientation', handleOrientation, true);
-    };
-  }, [error, permissionState]);
+    window.addEventListener('deviceorientation', handleOrientation, true);
+    setOrientationListener(() => handleOrientation);
+  }, [error, permissionState, stopCompass]);
+
+  const recalibrate = () => {
+    stopCompass();
+    // Short delay to allow sensors to reset
+    setTimeout(() => {
+        startCompass();
+    }, 100);
+  };
+
 
   const handlePermission = useCallback(async () => {
     if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
@@ -76,7 +92,11 @@ export const useVastu = () => {
       startCompass();
       setPermissionState('granted');
     }
-  }, [handlePermission, startCompass]);
+
+    return () => {
+      stopCompass();
+    }
+  }, [handlePermission, startCompass, stopCompass]);
 
   return {
     heading,
@@ -84,5 +104,6 @@ export const useVastu = () => {
     error,
     currentDirection,
     handlePermission,
+    recalibrate,
   };
 };

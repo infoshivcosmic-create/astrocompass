@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
 import { useVastu } from '@/hooks/useVastu';
 import {
   AlertDialog,
@@ -13,6 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Button } from '@/components/ui/button';
 
 const compassThemes = [
   '/images/1.png',
@@ -42,7 +43,7 @@ const CompassThemeSwitcher: React.FC<{ onNext: () => void; onPrev: () => void }>
 const Compass: React.FC<{ rotation: number; theme: string }> = ({ rotation, theme }) => (
     <div
       className="w-full h-full transition-transform duration-500 ease-in-out"
-      style={{ transform: `rotate(${rotation}deg)` }}
+      style={{ transform: `rotate(${-rotation}deg)` }}
     >
       <Image
         src={theme}
@@ -58,16 +59,20 @@ const Compass: React.FC<{ rotation: number; theme: string }> = ({ rotation, them
   );
 
 
-const CompassDetails: React.FC<{ heading: number; direction: string | undefined }> = ({ heading, direction }) => (
+const CompassDetails: React.FC<{ heading: number; direction: string | undefined; onRecalibrate: () => void; }> = ({ heading, direction, onRecalibrate }) => (
     <div className="text-center mt-6">
         <h1 className="text-lg font-semibold text-gray-800 mb-2">Destiny Compass</h1>
         <div className="text-2xl font-bold text-gray-900">{Math.round(heading)}° {direction}</div>
+        <Button onClick={onRecalibrate} variant="outline" className="mt-4">
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Recalibrate
+        </Button>
     </div>
     );
 
 const VastuCompass: React.FC = () => {
   const [currentThemeIndex, setCurrentThemeIndex] = useState(0);
-  const { heading, permissionState, error, currentDirection, handlePermission } = useVastu();
+  const { heading, permissionState, error, currentDirection, handlePermission, recalibrate } = useVastu();
 
 
   const handleNextTheme = () => {
@@ -77,6 +82,15 @@ const VastuCompass: React.FC = () => {
   const handlePrevTheme = () => {
     setCurrentThemeIndex((prevIndex) => (prevIndex - 1 + compassThemes.length) % compassThemes.length);
   };
+  
+  const handleRecalibrate = () => {
+    // In a real scenario, you might want to show a loading state or feedback
+    console.log("Recalibrating...");
+    if (recalibrate) {
+      recalibrate();
+    }
+  };
+
 
   const renderContent = () => {
     if (permissionState === 'unsupported' || (permissionState === 'denied' && error)) {
@@ -96,10 +110,10 @@ const VastuCompass: React.FC = () => {
                         <path d="M12 0L24 21H0L12 0Z" fill="#FF0000"/>
                     </svg>
                 </div>
-                <Compass rotation={-heading} theme={compassThemes[currentThemeIndex]} />
+                <Compass rotation={heading} theme={compassThemes[currentThemeIndex]} />
                 <CompassThemeSwitcher onNext={handleNextTheme} onPrev={handlePrevTheme} />
             </div>
-            <CompassDetails heading={heading} direction={currentDirection?.name} />
+            <CompassDetails heading={heading} direction={currentDirection?.name} onRecalibrate={handleRecalibrate} />
         </>
     )
   }
