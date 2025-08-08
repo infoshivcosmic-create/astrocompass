@@ -5,7 +5,7 @@ import { getVastuDirection } from '@/lib/vastu';
 import type { VastuDirection } from '@/lib/vastu';
 
 export const useVastu = () => {
-  const [heading, setHeading] = useState<number>(0);
+  const [heading, setHeading] = useState<number | null>(null);
   const [permissionState, setPermissionState] = useState<'denied' | 'granted' | 'unsupported'>('granted');
   const [isIOS, setIsIOS] = useState(false);
   const [error, setError] = useState<string | null>(null);

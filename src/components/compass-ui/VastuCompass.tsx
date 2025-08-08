@@ -40,10 +40,13 @@ const CompassThemeSwitcher: React.FC<{ onNext: () => void; onPrev: () => void }>
     </div>
   );
 
-const Compass: React.FC<{ rotation: number; theme: string }> = ({ rotation, theme }) => (
+const Compass: React.FC<{ rotation: number | null; theme: string }> = ({ rotation, theme }) => (
     <div
-      className="w-full h-full transition-transform duration-500 ease-in-out flex items-center justify-center"
-      style={{ transform: `rotate(${-rotation}deg)` }}
+      className="w-full h-full flex items-center justify-center"
+      style={{ 
+        transform: `rotate(${rotation !== null ? -rotation : 0}deg)`,
+        transition: rotation !== null ? 'transform 500ms ease-in-out' : 'none',
+       }}
     >
       <Image
         src={theme}
@@ -59,10 +62,10 @@ const Compass: React.FC<{ rotation: number; theme: string }> = ({ rotation, them
   );
 
 
-const CompassDetails: React.FC<{ heading: number; direction: string | undefined; onRecalibrate: () => void; }> = ({ heading, direction, onRecalibrate }) => (
+const CompassDetails: React.FC<{ heading: number | null; direction: string | undefined; onRecalibrate: () => void; }> = ({ heading, direction, onRecalibrate }) => (
     <div className="text-center mt-6">
         <h1 className="text-lg font-semibold text-gray-800 mb-2">Destiny Compass</h1>
-        <div className="text-2xl font-bold text-gray-900">{Math.round(heading)}° {direction}</div>
+        <div className="text-2xl font-bold text-gray-900">{heading !== null ? `${Math.round(heading)}° ${direction}`: '--°'}</div>
         <Button onClick={onRecalibrate} variant="outline" className="mt-4">
           <RefreshCw className="mr-2 h-4 w-4" />
           Recalibrate
@@ -104,7 +107,7 @@ const VastuCompass: React.FC = () => {
 
     return (
         <>
-            <div className="relative w-80 h-80 sm:w-96 sm:h-96 mx-auto mt-24 mb-8">
+            <div className="relative w-80 h-80 sm:w-96 sm:h-96 mx-auto mt-24 mb-8 flex items-center justify-center">
                 <div className="absolute left-1/2 -translate-x-1/2 z-10" style={{ top: '-40px' }}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 0L24 21H0L12 0Z" fill="#FF0000"/>
