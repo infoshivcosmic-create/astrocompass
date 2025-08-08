@@ -29,7 +29,8 @@ const CompassThemeSwitcher: React.FC<{ onNext: () => void; onPrev: () => void }>
     <div className="absolute inset-0 flex items-center justify-between z-20">
       <button
         onClick={onPrev}
-        className="bg-white/50 rounded-full p-2 ml-[-35px]"
+        className="bg-white/50 rounded-full p-2"
+        style={{ marginLeft: '-34.5px' }}
       >
         <ChevronLeft className="w-8 h-8 text-gray-700" />
       </button>
