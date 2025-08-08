@@ -30,7 +30,7 @@ const CompassThemeSwitcher: React.FC<{ onNext: () => void; onPrev: () => void }>
       <button
         onClick={onPrev}
         className="bg-white/50 rounded-full p-2"
-        style={{ marginLeft: '-35px' }}
+        style={{ marginLeft: '-36.5px' }}
       >
         <ChevronLeft className="w-8 h-8 text-gray-700" />
       </button>
