@@ -30,7 +30,8 @@ export const useVastu = () => {
         alpha = (event as any).webkitCompassHeading;
       } 
       // For other devices
-      else {
+      else if (event.alpha !== null) {
+        // The alpha value is the compass heading in degrees, 0-360
         alpha = event.alpha;
       }
 
@@ -89,9 +90,8 @@ export const useVastu = () => {
       return;
     }
 
-    if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
-      // Automatically request permission
-      handlePermission();
+    if (ios) {
+        handlePermission();
     } else {
       startCompass();
       setPermissionState('granted');
@@ -100,7 +100,8 @@ export const useVastu = () => {
     return () => {
       stopCompass();
     }
-  }, [handlePermission, startCompass, stopCompass]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     heading,

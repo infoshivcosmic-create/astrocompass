@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Button } from '@/components/ui/button';
+import VastuDetails from './VastuDetails';
 
 const compassThemes = [
   '/images/1.png',
@@ -87,8 +88,6 @@ const VastuCompass: React.FC = () => {
   };
   
   const handleRecalibrate = () => {
-    // In a real scenario, you might want to show a loading state or feedback
-    console.log("Recalibrating...");
     if (recalibrate) {
       recalibrate();
     }
@@ -96,6 +95,26 @@ const VastuCompass: React.FC = () => {
 
 
   const renderContent = () => {
+    if (permissionState === 'denied' && typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+      return (
+        <AlertDialog open={true}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Permission Required</AlertDialogTitle>
+              <AlertDialogDescription>
+                To use the compass, please allow access to motion and orientation sensors in your device settings.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={handlePermission}>
+                Grant Permission
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      );
+    }
+    
     if (permissionState === 'unsupported' || (permissionState === 'denied' && error)) {
       return (
         <div className="text-center mt-20 text-red-500">
@@ -117,6 +136,7 @@ const VastuCompass: React.FC = () => {
                 <CompassThemeSwitcher onNext={handleNextTheme} onPrev={handlePrevTheme} />
             </div>
             <CompassDetails heading={heading} direction={currentDirection?.name} onRecalibrate={handleRecalibrate} />
+            {currentDirection && <VastuDetails direction={currentDirection} />}
         </>
     )
   }
