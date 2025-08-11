@@ -15,7 +15,6 @@ export const useVastu = () => {
 
   const stopCompass = useCallback(() => {
     if (orientationListenerRef.current) {
-      window.removeEventListener('deviceorientationabsolute', orientationListenerRef.current, true);
       window.removeEventListener('deviceorientation', orientationListenerRef.current, true);
       orientationListenerRef.current = null;
     }
@@ -29,18 +28,11 @@ export const useVastu = () => {
       
       // Prefer webkitCompassHeading for iOS as it's often more reliable
       if ((event as any).webkitCompassHeading) {
-        alpha = (event as any).webkitCompassHeading;
+        alpha = 360 - (event as any).webkitCompassHeading;
       } 
       // For other devices, use the alpha value
       else if (event.alpha !== null) {
-        // The alpha value is the compass heading in degrees, 0-360
-        // event.absolute should be true for a real-world compass reading
-        alpha = event.absolute ? event.alpha : null;
-        if (!event.absolute) {
-            // Fallback for devices that don't support absolute orientation
-            // Note: this may be less accurate
-            alpha = event.alpha;
-        }
+          alpha = event.alpha;
       }
 
       if (alpha !== null) {
@@ -55,12 +47,7 @@ export const useVastu = () => {
       }
     };
     
-    // Some browsers provide an 'absolute' version of the event
-    if ('ondeviceorientationabsolute' in window) {
-        window.addEventListener('deviceorientationabsolute', handleOrientation, true);
-    } else {
-        window.addEventListener('deviceorientation', handleOrientation, true);
-    }
+    window.addEventListener('deviceorientation', handleOrientation, true);
     
     orientationListenerRef.current = handleOrientation;
   }, [error, permissionState, stopCompass]);
@@ -98,6 +85,10 @@ export const useVastu = () => {
   }, [startCompass]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     if (!('DeviceOrientationEvent' in window)) {
       setPermissionState('unsupported');
       setError('Device orientation is not supported by your browser.');
