@@ -81,29 +81,12 @@ const VastuCompass: React.FC = () => {
   const [currentThemeIndex, setCurrentThemeIndex] = useState(0);
   const { heading, permissionState, error, currentDirection, handlePermission, recalibrate } = useVastu();
   const [rotation, setRotation] = useState<number>(0);
-  const prevHeadingRef = useRef<number | null>(null);
-
+  
   useEffect(() => {
-    if (heading === null) {
-      return;
-    }
-
-    const oldHeading = prevHeadingRef.current;
-    prevHeadingRef.current = heading;
-
-    if (oldHeading === null) {
+    if (heading !== null) {
+      // Set rotation to negative heading to make it rotate clockwise
       setRotation(-heading);
-      return;
     }
-
-    let diff = heading - oldHeading;
-    if (diff > 180) {
-      diff -= 360;
-    } else if (diff < -180) {
-      diff += 360;
-    }
-
-    setRotation(prevRotation => prevRotation - diff);
   }, [heading]);
 
 

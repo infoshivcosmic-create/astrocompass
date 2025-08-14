@@ -24,19 +24,22 @@ export const useVastu = () => {
     stopCompass(); // Ensure no multiple listeners are attached
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
-      let alpha: number | null = null;
+      let newHeading: number | null = null;
       
-      // Prefer webkitCompassHeading for iOS as it's often more reliable
+      // Prefer webkitCompassHeading for iOS as it's often more reliable (0-360, 0 = North)
       if ((event as any).webkitCompassHeading) {
-        alpha = 360 - (event as any).webkitCompassHeading;
+        newHeading = (event as any).webkitCompassHeading;
       } 
-      // For other devices, use the alpha value
+      // For other devices, use the alpha value (0-360, 0 = North)
       else if (event.alpha !== null) {
-          alpha = event.alpha;
+          // The event.absolute property indicates if the orientation is relative to Earth's coordinate system.
+          // We prefer absolute values.
+          if(event.absolute === true) {
+            newHeading = event.alpha;
+          }
       }
 
-      if (alpha !== null) {
-        const newHeading = Math.round(alpha);
+      if (newHeading !== null) {
         setHeading(newHeading);
         const direction = getVastuDirection(newHeading);
         setCurrentDirection(direction);
