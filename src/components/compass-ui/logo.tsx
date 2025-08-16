@@ -4,7 +4,9 @@ import type {HTMLAttributes} from 'react';
 export function Logo(props: HTMLAttributes<HTMLDivElement>) {
   return (
     <div {...props}>
-      <Image src="/images/logo.png" alt="Shiv Cosmic Energy Solutions" width={60} height={20} unoptimized />
+      <div className="relative w-[60px] h-[20px]">
+        <Image src="/images/logo.png" alt="Shiv Cosmic Energy Solutions" fill unoptimized />
+      </div>
     </div>
   );
 }
